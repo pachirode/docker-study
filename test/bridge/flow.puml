@@ -1,0 +1,32 @@
+@startuml
+title Docker Bridge 网络拓扑
+
+rectangle "Node-1" {
+  frame "dockerA\n172.18.0.2" {
+    node veth0
+  }
+
+  frame "dockerB\n172.18.0.3" {
+    node veth2
+  }
+
+  rectangle "br0\n172.18.0.1" as br0
+
+  node veth1
+  node veth3
+  node eth0 as eth0
+
+  veth0 --> veth1
+  veth2 --> veth3
+
+  veth1 --> br0
+  veth3 --> br0
+
+  br0 --> eth0 : NAT
+}
+
+cloud Outside
+
+eth0 --> Outside
+
+@enduml
