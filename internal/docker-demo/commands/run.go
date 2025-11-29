@@ -2,10 +2,12 @@ package commands
 
 import (
 	"fmt"
+	"sync"
+
+	"github.com/pachirode/pkg/log"
+
 	"github.com/pachirode/docker-demo/internal/docker-demo/options"
 	"github.com/pachirode/docker-demo/pkg/app"
-	"github.com/pachirode/pkg/log"
-	"sync"
 )
 
 const commandDesc = `Create a container with namespace and cgroups limit
@@ -46,7 +48,29 @@ func Run() app.RunCommandFunc {
 			runOpts.TTY = true
 		}
 
+		var cmdArray []string
+		for _, arg := range args {
+			cmdArray = append(cmdArray, arg)
+		}
+		//imagName := cmdArray[0]
+
 		log.Infow("Starting Create tty")
+		//run(imagName, runOpts)
 		return nil
 	}
 }
+
+//func run(imagName string, opts *options.RunOptions) {
+//	containerID := container.GenerateContainerID()
+//
+//	// Start
+//	parent, writePipe := container.NewParentProcess(imagName, containerID, opts)
+//	if parent == nil {
+//		log.Errorf("Error to create parent process")
+//		return
+//	}
+//	if err := parent.Start(); err != nil {
+//		log.Errorw(err, "Error to run parent.Start")
+//		return
+//	}
+//}

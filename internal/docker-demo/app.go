@@ -1,8 +1,9 @@
 package docker_demo
 
 import (
-	"github.com/pachirode/docker-demo/internal/docker-demo/commands"
 	"github.com/pachirode/docker-demo/pkg/app"
+
+	"github.com/pachirode/docker-demo/internal/docker-demo/commands"
 )
 
 const commandDesc = `A simple runtime implementation.

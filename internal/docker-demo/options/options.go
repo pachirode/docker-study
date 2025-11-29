@@ -9,30 +9,30 @@ import (
 )
 
 type RunOptions struct {
-	TTY         bool         `json:"tty" mapstructure:"tty"`
-	MEM         string       `json:"men" mapstructure:"men"`
-	CPU         string       `json:"cpu" mapstructure:"cpu"`
-	Volume      string       `json:"volume" mapstructure:"volume"`
-	Detach      bool         `json:"detach" mapstructure:"detach"`
-	Name        string       `json:"name" mapstructure:"name"`
-	Environment string       `json:"environment" mapstructure:"environment"`
-	Net         string       `json:"net" mapstructure:"net"`
-	Port        string       `json:"port" mapstructure:"port"`
-	Log         *log.Options `json:"log" mapstructure:"log"`
+	TTY    bool         `json:"tty" mapstructure:"tty"`
+	MEM    string       `json:"men" mapstructure:"men"`
+	CPU    string       `json:"cpu" mapstructure:"cpu"`
+	Volume string       `json:"volume" mapstructure:"volume"`
+	Detach bool         `json:"detach" mapstructure:"detach"`
+	Name   string       `json:"name" mapstructure:"name"`
+	Envs   []string     `json:"environment" mapstructure:"environment"`
+	Net    string       `json:"net" mapstructure:"net"`
+	Port   string       `json:"port" mapstructure:"port"`
+	Log    *log.Options `json:"log" mapstructure:"log"`
 }
 
 func NewRunOptions() *RunOptions {
 	opts := RunOptions{
-		TTY:         false,
-		MEM:         "",
-		CPU:         "",
-		Volume:      "",
-		Detach:      false,
-		Name:        "",
-		Environment: "",
-		Net:         "",
-		Port:        "",
-		Log:         log.NewOptions(),
+		TTY:    false,
+		MEM:    "",
+		CPU:    "",
+		Volume: "",
+		Detach: false,
+		Name:   "",
+		Envs:   []string{},
+		Net:    "",
+		Port:   "",
+		Log:    log.NewOptions(),
 	}
 
 	return &opts
@@ -48,7 +48,7 @@ func (opts *RunOptions) Flags() (nfs flags.NamedFlagSets) {
 
 	fs.StringVarP(&opts.Volume, "volume", "v", "", "-v /ect/conf:/etc/conf")
 	fs.StringVarP(&opts.Name, "name", "n", "", "-n test-container")
-	fs.StringVarP(&opts.Environment, "env", "e", "", "-e env=test")
+	fs.StringSliceVarP(&opts.Envs, "envs", "e", []string{}, "-e env=test")
 	fs.StringVar(&opts.Net, "net", "", "--net testbr")
 	fs.StringVarP(&opts.Port, "port", "p", "", "-p 8080:80")
 
