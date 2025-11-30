@@ -2,7 +2,6 @@ package app
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -51,8 +50,8 @@ func addConfigFlag(basename string, fs *pflag.FlagSet) {
 		}
 
 		if err := viper.ReadInConfig(); err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "[Error]: Failed to read configuration file(%s): %v\n", cfgFile, err)
-			os.Exit(1)
+			//_, _ = fmt.Fprintf(os.Stderr, "[Error]: Failed to read configuration file(%s): %v\n", cfgFile, err)
+			return
 		}
 	})
 }

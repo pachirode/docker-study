@@ -64,6 +64,7 @@ func createOtherDirs(containerID string) {
 		GetUpper(containerID),
 		GetWorker(containerID),
 	}
+	log.Infow("Start create other dirs")
 
 	utils.MkdirDirs(dirs, consts.PERM_0777)
 }
@@ -89,6 +90,7 @@ func mountOverlayFS(containerID string) {
 	mergedPath := GetMerged(containerID)
 
 	overlayFSDirs := GetOverlayFSDirs(lowerPath, upperPath, workerPath)
+	log.Infow("Start mount overlay", "cmd", fmt.Sprintf("mount -t overlay overlay -o %s, %s", overlayFSDirs, mergedPath))
 	cmd := exec.Command("mount", "-t", "overlay", "overlay", "-o", overlayFSDirs, mergedPath)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

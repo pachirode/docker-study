@@ -18,6 +18,7 @@ func NewApp(basename string) *app.App {
 	)
 
 	application.AddCommand(commands.NewRunCommand())
+	application.AddCommand(commands.NewInitCommand())
 	application.BuildCommand()
 
 	return application

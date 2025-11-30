@@ -30,12 +30,7 @@ func NewParentProcess(imageName, containID string, opts *options.RunOptions) (*e
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 	} else {
-		dirPath, err = GetInfoLocation(containID)
-		if err != nil {
-			log.Errorw(err, "Error to get info location")
-			return nil, nil
-		}
-		stdLogFile, err = GetLogFile(containID)
+		stdLogFile, err := GetLogFile(containID)
 		if err != nil {
 			log.Errorw(err, "Error to get log file")
 			return nil, nil

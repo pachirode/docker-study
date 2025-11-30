@@ -33,6 +33,7 @@ func GetInfoLocation(containerID string) (string, error) {
 }
 
 func GetLogFile(containerID string) (*os.File, error) {
+	GetInfoLocation(containerID)
 	stdLogFilePath := fmt.Sprintf(consts.LOG_FILE_TEMP, containerID, containerID)
 	stdLogFile, err := os.Create(stdLogFilePath)
 	if err != nil {
@@ -51,7 +52,7 @@ func setUpMount() {
 	log.Infow("Get current location successfully", "dirPath", pwd)
 
 	// ""没有特定的源文件系统，"/" 目标挂载点的根文件系统，私有挂载，递归有效
-	err = syscall.Mount("", "/", "", syscall.syscall.MS_PRIVATE|syscall.MS_REC, "")
+	err = syscall.Mount("", "/", "", syscall.MS_PRIVATE|syscall.MS_REC, "")
 	err = pivotRoot(pwd)
 	if err != nil {
 		log.Errorw(err, "Error to pivotRoot")
@@ -78,7 +79,7 @@ func pivotRoot(root string) error {
 		return err
 	}
 	// 将根文件切换到新的 root
-	if err := syscall.PivotRoot(root, consts.PERM_0777); err != nil {
+	if err := syscall.PivotRoot(root, pivotDir); err != nil {
 		return errors.WithMessagef(err, "Error to pivotRoot")
 	}
 	if err := syscall.Chdir("/"); err != nil {

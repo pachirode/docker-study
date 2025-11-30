@@ -20,7 +20,7 @@ func RunContainerInitProcess() error {
 
 	path, err := exec.LookPath(cmdArray[0])
 	if err != nil {
-		log.Errorw(err, "Error to exec loop path")
+		log.Errorw(err, "Error to exec loop path", "command", cmdArray[0])
 		return err
 	}
 	log.Infow("Find path", "path", path)
