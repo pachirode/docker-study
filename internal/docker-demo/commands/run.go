@@ -2,13 +2,13 @@ package commands
 
 import (
 	"fmt"
+	"os"
 	"sync"
 
 	"github.com/pachirode/pkg/log"
 
 	"github.com/pachirode/docker-demo/internal/docker-demo/options"
 	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/container"
-	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/utils"
 	"github.com/pachirode/docker-demo/pkg/app"
 )
 
@@ -24,7 +24,6 @@ var (
 )
 
 func NewRunCommand() *app.Command {
-
 	runOnce.Do(func() {
 		runOpts = options.NewRunOptions()
 		runCmd = app.NewCommand("run",
@@ -54,19 +53,15 @@ func Run() app.RunCommandFunc {
 		for _, arg := range args {
 			cmdArray = append(cmdArray, arg)
 		}
-		imagName := cmdArray[0]
 
 		log.Infow("Starting Create tty")
-		run(imagName, runOpts, cmdArray)
+		run(runOpts, cmdArray)
 		return nil
 	}
 }
 
-func run(imagName string, opts *options.RunOptions, cmdArray []string) {
-	containerID, _ := container.GenerateContainerID()
-
-	// Start
-	parent, writePipe := container.NewParentProcess(imagName, containerID, opts)
+func run(opts *options.RunOptions, cmdArray []string) {
+	parent := container.NewParentProcess(opts, cmdArray[0])
 	if parent == nil {
 		log.Errorf("Error to create parent process")
 		return
@@ -75,6 +70,6 @@ func run(imagName string, opts *options.RunOptions, cmdArray []string) {
 		log.Errorw(err, "Error to run parent.Start")
 		return
 	}
-
-	utils.WritePipeCommand(cmdArray, writePipe)
+	parent.Wait()
+	os.Exit(-1)
 }
