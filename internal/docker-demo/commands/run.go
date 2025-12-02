@@ -2,7 +2,9 @@ package commands
 
 import (
 	"fmt"
-	"os"
+	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/cgroups"
+	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/cgroups/resource"
+	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/utils"
 	"sync"
 
 	"github.com/pachirode/pkg/log"
@@ -61,7 +63,7 @@ func Run() app.RunCommandFunc {
 }
 
 func run(opts *options.RunOptions, cmdArray []string) {
-	parent := container.NewParentProcess(opts, cmdArray[0])
+	parent, writePipe := container.NewParentProcess(opts, cmdArray[0])
 	if parent == nil {
 		log.Errorf("Error to create parent process")
 		return
@@ -70,6 +72,16 @@ func run(opts *options.RunOptions, cmdArray []string) {
 		log.Errorw(err, "Error to run parent.Start")
 		return
 	}
+	cgroupManager := cgroups.NewCgroupManager("docker_demo")
+	res := &resource.ResourceConfig{
+		CpuSet:      opts.CPUSet,
+		CpuShare:    opts.CPUShare,
+		MemoryLimit: opts.MEM,
+	}
+	defer cgroupManager.Destroy()
+	cgroupManager.Set(res)
+	cgroupManager.Apply(parent.Process.Pid, res)
+
+	utils.WritePipeCommand(cmdArray, writePipe)
 	parent.Wait()
-	os.Exit(-1)
 }

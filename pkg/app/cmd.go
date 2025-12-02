@@ -2,12 +2,13 @@ package app
 
 import (
 	"fmt"
-	"github.com/pachirode/docker-demo/pkg/flags"
-	"github.com/pachirode/docker-demo/pkg/term"
 	"os"
 
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
+
+	"github.com/pachirode/docker-demo/pkg/flags"
+	"github.com/pachirode/docker-demo/pkg/term"
 )
 
 type Command struct {

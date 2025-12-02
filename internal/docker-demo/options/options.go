@@ -9,37 +9,38 @@ import (
 )
 
 type RunOptions struct {
-	TTY    bool         `json:"tty" mapstructure:"tty"`
-	MEM    string       `json:"men" mapstructure:"men"`
-	CPU    string       `json:"cpu" mapstructure:"cpu"`
-	Volume string       `json:"volume" mapstructure:"volume"`
-	Detach bool         `json:"detach" mapstructure:"detach"`
-	Name   string       `json:"name" mapstructure:"name"`
-	Envs   []string     `json:"environment" mapstructure:"environment"`
-	Net    string       `json:"net" mapstructure:"net"`
-	Port   string       `json:"port" mapstructure:"port"`
-	Log    *log.Options `json:"log" mapstructure:"log"`
+	TTY      bool         `json:"tty" mapstructure:"tty"`
+	MEM      string       `json:"men" mapstructure:"men"`
+	CPUSet   string       `json:"cpuset" mapstructure:"cpuset"`
+	CPUShare int          `json:"cpushare" mapstructure:"cpushare"`
+	Volume   string       `json:"volume" mapstructure:"volume"`
+	Detach   bool         `json:"detach" mapstructure:"detach"`
+	Name     string       `json:"name" mapstructure:"name"`
+	Envs     []string     `json:"environment" mapstructure:"environment"`
+	Net      string       `json:"net" mapstructure:"net"`
+	Port     string       `json:"port" mapstructure:"port"`
+	Log      *log.Options `json:"log" mapstructure:"log"`
 }
 
 func NewRunOptions() *RunOptions {
 	opts := RunOptions{
-		TTY:    false,
-		MEM:    "",
-		CPU:    "",
-		Volume: "",
-		Detach: false,
-		Name:   "",
-		Envs:   []string{},
-		Net:    "",
-		Port:   "",
-		Log:    log.NewOptions(),
+		TTY:      false,
+		MEM:      "",
+		CPUSet:   "",
+		CPUShare: 0,
+		Volume:   "",
+		Detach:   false,
+		Name:     "",
+		Envs:     []string{},
+		Net:      "",
+		Port:     "",
+		Log:      log.NewOptions(),
 	}
 
 	return &opts
 }
 
 func (opts *RunOptions) Flags() (nfs flags.NamedFlagSets) {
-
 	opts.Log.AddFlags(nfs.GetFlagSet("logs"))
 
 	fs := nfs.GetFlagSet("base")
@@ -54,7 +55,8 @@ func (opts *RunOptions) Flags() (nfs flags.NamedFlagSets) {
 
 	fsLimit := nfs.GetFlagSet("limit")
 	fsLimit.StringVarP(&opts.MEM, "mem", "m", "", "-m 100m")
-	fsLimit.StringVar(&opts.CPU, "cpu", "", "--cpu 100")
+	fsLimit.StringVar(&opts.CPUSet, "cpuset", "", "--cpuset 100")
+	fsLimit.IntVar(&opts.CPUShare, "cpushare", 0, "--cpushare 10")
 
 	return nfs
 }

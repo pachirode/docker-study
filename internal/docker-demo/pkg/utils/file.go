@@ -35,6 +35,7 @@ func PathExists(path string) (bool, error) {
 	if err == nil {
 		return true, nil
 	}
+
 	if os.IsNotExist(err) {
 		return false, nil
 	}

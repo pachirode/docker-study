@@ -21,7 +21,7 @@ func FindCgroupMountpoint(subsystem string) string {
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
-		txt := scanner.Text()
+		txt := scanner.Text() // 104 85 0:20 / /sys/fs/cgroup/memory rw,nosuid,nodev,noexec,relatime - cgroup cgroup rw,memory
 		fields := strings.Split(txt, " ")
 		for _, opt := range strings.Split(fields[len(fields)-1], ",") {
 			if opt == subsystem {

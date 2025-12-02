@@ -19,6 +19,11 @@ const (
 	LOG_FILE_TEMP      = INFO_LOCATION_TEMP + "%s-json.log"
 )
 
+// pivotRoot
+const (
+	BUSYBOX_ROOT = "/root/busybox"
+)
+
 // rootfs 相关的
 const (
 	IMAGE_PATH             = "/var/lib/docker-demo/image/"

@@ -28,10 +28,7 @@ func NewInitCommand() *app.Command {
 
 func ini() app.RunCommandFunc {
 	return func(args []string) error {
-		var cmdArray []string
-		for _, arg := range args {
-			cmdArray = append(cmdArray, arg)
-		}
-		return container.RunContainerInitProcess(cmdArray[0], nil)
+
+		return container.RunContainerInitProcess()
 	}
 }
