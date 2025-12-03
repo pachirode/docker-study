@@ -21,7 +21,8 @@ const (
 
 // pivotRoot
 const (
-	BUSYBOX_ROOT = "/root/busybox"
+	BUSYBOX_ROOT_MNT = "/var/lib/docker-demo/overlay2/busybox/merged"
+	BUSYBOX          = "busybox"
 )
 
 // rootfs 相关的

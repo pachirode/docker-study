@@ -28,7 +28,6 @@ func NewInitCommand() *app.Command {
 
 func ini() app.RunCommandFunc {
 	return func(args []string) error {
-
 		return container.RunContainerInitProcess()
 	}
 }

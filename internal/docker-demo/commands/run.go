@@ -2,15 +2,16 @@ package commands
 
 import (
 	"fmt"
-	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/cgroups"
-	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/cgroups/resource"
-	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/utils"
 	"sync"
 
 	"github.com/pachirode/pkg/log"
 
 	"github.com/pachirode/docker-demo/internal/docker-demo/options"
+	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/cgroups"
+	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/cgroups/resource"
 	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/container"
+	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/rootfs"
+	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/utils"
 	"github.com/pachirode/docker-demo/pkg/app"
 )
 
@@ -84,4 +85,5 @@ func run(opts *options.RunOptions, cmdArray []string) {
 
 	utils.WritePipeCommand(cmdArray, writePipe)
 	parent.Wait()
+	rootfs.DeleteWorkSpace(opts)
 }

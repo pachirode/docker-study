@@ -16,7 +16,7 @@ func MkdirAll(dirPath string, perm os.FileMode) error {
 
 func MkdirDirs(dirPaths []string, perm os.FileMode) {
 	for _, dirPath := range dirPaths {
-		if err := os.Mkdir(dirPath, perm); err != nil {
+		if err := os.MkdirAll(dirPath, perm); err != nil {
 			log.Errorw(err, "Error to create dir", "dirPath", dirPath)
 		}
 	}
