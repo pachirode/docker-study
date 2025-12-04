@@ -8,7 +8,7 @@ import (
 type CgroupManager interface {
 	Apply(pid int, res *resource.ResourceConfig) error
 	Set(res *resource.ResourceConfig) error
-	Destroy() error
+	Destroy()
 }
 
 func NewCgroupManager(path string) CgroupManager {

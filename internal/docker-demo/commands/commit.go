@@ -7,7 +7,7 @@ import (
 	"github.com/pachirode/docker-demo/pkg/app"
 )
 
-const commitCommandDesc = `Creat a container process run user's process in container`
+const commitCommandDesc = `commit container to image`
 
 var (
 	commitOnce sync.Once

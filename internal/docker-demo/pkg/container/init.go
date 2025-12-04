@@ -2,12 +2,13 @@ package container
 
 import (
 	"fmt"
-	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/utils"
 	"os"
 	"os/exec"
 	"syscall"
 
 	"github.com/pachirode/pkg/log"
+
+	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/utils"
 )
 
 // RunContainerInitProcess 启动容器的 init 进程

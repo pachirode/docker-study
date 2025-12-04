@@ -20,6 +20,11 @@ func NewApp(basename string) *app.App {
 	application.AddCommand(commands.NewRunCommand())
 	application.AddCommand(commands.NewInitCommand())
 	application.AddCommand(commands.NewCommitCommand())
+	application.AddCommand(commands.NewPSCommand())
+	application.AddCommand(commands.NewLogsCommand())
+	application.AddCommand(commands.NewExecCommand())
+	application.AddCommand(commands.NewStopCommand())
+	application.AddCommand(commands.NewRmCommand())
 	application.BuildCommand()
 
 	return application

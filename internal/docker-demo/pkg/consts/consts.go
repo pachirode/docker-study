@@ -15,8 +15,10 @@ const (
 const (
 	INFO_LOCATION      = "/var/lib/docker-demo/containers/"
 	INFO_LOCATION_TEMP = INFO_LOCATION + "%s/"
-	BASH               = "/proc/self/exe"
+	SELF_EXE           = "/proc/self/exe"
 	LOG_FILE_TEMP      = INFO_LOCATION_TEMP + "%s-json.log"
+	CONFIG_JSON        = "config.json"
+	CONTAINER_LOG      = "container.log"
 )
 
 // pivotRoot
@@ -36,6 +38,13 @@ const (
 	OVERLAY_PARAMETER_TEMP = "lowerdir=%s,upperdir=%s,workdir=%s"
 )
 
+// Pipe
 const (
 	FDINDEX = 3 // index 为三的文件描述符，传递进来管道的另一端，默认会包含标准输入，标准输出，标准错误
+)
+
+// Exec
+const (
+	ENV_EXEC_PID = "docker-demo-pid"
+	ENV_EXEC_CMD = "docker-demo-cmd"
 )

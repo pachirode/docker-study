@@ -3,24 +3,26 @@ package container
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"syscall"
 
-	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/consts"
-
-	"github.com/pachirode/docker-demo/pkg/errors"
 	"github.com/pachirode/pkg/log"
+
+	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/consts"
+	"github.com/pachirode/docker-demo/pkg/errors"
 )
 
-func GenerateContainerID() (string, error) {
+func GenerateContainerID() string {
 	b := make([]byte, 6)
 	_, err := rand.Read(b)
 	if err != nil {
-		return "", err
+		return ""
 	}
-	return hex.EncodeToString(b), nil
+	return hex.EncodeToString(b)
 }
 
 func GetInfoLocation(containerID string) (string, error) {
@@ -94,4 +96,29 @@ func pivotRoot(root string) error {
 	}
 
 	return os.Remove(pivotDir)
+}
+
+func getContainerInfo(containerID string) (*Info, error) {
+	configDir := fmt.Sprintf(consts.INFO_LOCATION_TEMP, containerID)
+	configFile := path.Join(configDir, consts.CONFIG_JSON)
+	content, err := os.ReadFile(configFile)
+	if err != nil {
+		log.Errorw(err, "Error to read config file", "path", configFile)
+		return nil, err
+	}
+	info := new(Info)
+	if err = json.Unmarshal(content, info); err != nil {
+		log.Errorw(err, "Error to unmarshal config file", "content", content)
+		return nil, err
+	}
+
+	return info, nil
+}
+
+func getContainerPidByID(containerID string) (string, error) {
+	info, err := getContainerInfo(containerID)
+	if err != nil {
+		return "", err
+	}
+	return info.Pid, nil
 }

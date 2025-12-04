@@ -7,10 +7,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/pachirode/docker-demo/pkg/errors"
 	"golang.org/x/sys/unix"
 
 	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/consts"
+	"github.com/pachirode/docker-demo/pkg/errors"
 )
 
 const cgroupMountPoint = "/sys/fs/cgroup"

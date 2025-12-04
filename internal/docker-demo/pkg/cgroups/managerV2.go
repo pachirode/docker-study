@@ -34,9 +34,8 @@ func (c *CgroupManagerV2) Set(res *resource.ResourceConfig) error {
 }
 
 // Destroy 释放cgroup
-func (c *CgroupManagerV2) Destroy() error {
+func (c *CgroupManagerV2) Destroy() {
 	for _, subSysIns := range fs2.SubsystemIns {
 		subSysIns.Remove(c.Path)
 	}
-	return nil
 }

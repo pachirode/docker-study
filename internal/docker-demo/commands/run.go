@@ -64,7 +64,9 @@ func Run() app.RunCommandFunc {
 }
 
 func run(opts *options.RunOptions, cmdArray []string) {
-	parent, writePipe := container.NewParentProcess(opts, cmdArray[0])
+	containerID := container.GenerateContainerID()
+
+	parent, writePipe := container.NewParentProcess(containerID, opts, cmdArray[0])
 	if parent == nil {
 		log.Errorf("Error to create parent process")
 		return
@@ -73,6 +75,7 @@ func run(opts *options.RunOptions, cmdArray []string) {
 		log.Errorw(err, "Error to run parent.Start")
 		return
 	}
+
 	cgroupManager := cgroups.NewCgroupManager("docker_demo")
 	res := &resource.ResourceConfig{
 		CpuSet:      opts.CPUSet,
@@ -80,10 +83,19 @@ func run(opts *options.RunOptions, cmdArray []string) {
 		MemoryLimit: opts.MEM,
 	}
 	defer cgroupManager.Destroy()
-	cgroupManager.Set(res)
-	cgroupManager.Apply(parent.Process.Pid, res)
+	_ = cgroupManager.Set(res)
+	_ = cgroupManager.Apply(parent.Process.Pid, res)
+
+	_, err := container.RecordContainerInfo(parent.Process.Pid, cmdArray, opts.Name, containerID, opts.Volume)
+	if err != nil {
+		log.Errorw(err, "Error to record container info")
+		return
+	}
 
 	utils.WritePipeCommand(cmdArray, writePipe)
-	parent.Wait()
-	rootfs.DeleteWorkSpace(opts)
+	if opts.TTY {
+		_ = parent.Wait()
+		rootfs.DeleteWorkSpace(opts)
+		container.DeleteContainerInfo(containerID)
+	}
 }

@@ -28,8 +28,6 @@ func InitBusyboxRoot() {
 			runCommand("docker", "export", "-o", "busybox.tar", "my_busybox")
 
 			runCommand("tar", "-xvf", "busybox.tar", "-C", "/var/lib/docker-demo/overlay2/busybox/lower")
-		} else {
-			fmt.Println("ok")
 		}
 	})
 }

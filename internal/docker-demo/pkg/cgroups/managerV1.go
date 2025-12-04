@@ -1,10 +1,10 @@
 package cgroups
 
 import (
-	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/cgroups/resource"
 	"github.com/pachirode/pkg/log"
 
 	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/cgroups/fs"
+	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/cgroups/resource"
 )
 
 type CgroupManagerV1 struct {
@@ -37,11 +37,10 @@ func (c *CgroupManagerV1) Set(res *resource.ResourceConfig) error {
 }
 
 // Destroy 删除 cgroup
-func (c *CgroupManagerV1) Destroy() error {
+func (c *CgroupManagerV1) Destroy() {
 	for _, subSysIns := range fs.SubsystemsIns {
 		if err := subSysIns.Remove(c.Path); err != nil {
 			log.Errorw(err, "Error to remove cgroup")
 		}
 	}
-	return nil
 }

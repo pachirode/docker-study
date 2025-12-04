@@ -1,12 +1,13 @@
 package utils
 
 import (
-	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/consts"
 	"io"
 	"os"
 	"strings"
 
 	"github.com/pachirode/pkg/log"
+
+	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/consts"
 )
 
 // WritePipeCommand 通过 WritePipe 将指令发送
