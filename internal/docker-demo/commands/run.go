@@ -41,7 +41,7 @@ func NewRunCommand() *app.Command {
 
 func Run() app.RunCommandFunc {
 	return func(args []string) error {
-		if len(args) < 1 {
+		if len(args) < 2 {
 			return fmt.Errorf("missing container command")
 		}
 
@@ -51,22 +51,22 @@ func Run() app.RunCommandFunc {
 		if !runOpts.Detach {
 			runOpts.TTY = true
 		}
-
+		imageName := args[0]
 		var cmdArray []string
-		for _, arg := range args {
+		for _, arg := range args[1:] {
 			cmdArray = append(cmdArray, arg)
 		}
 
 		log.Infow("Starting Create tty")
-		run(runOpts, cmdArray)
+		run(runOpts, cmdArray, imageName)
 		return nil
 	}
 }
 
-func run(opts *options.RunOptions, cmdArray []string) {
+func run(opts *options.RunOptions, cmdArray []string, imageName string) {
 	containerID := container.GenerateContainerID()
 
-	parent, writePipe := container.NewParentProcess(containerID, opts, cmdArray[0])
+	parent, writePipe := container.NewParentProcess(containerID, opts, cmdArray[0], imageName)
 	if parent == nil {
 		log.Errorf("Error to create parent process")
 		return
@@ -86,7 +86,7 @@ func run(opts *options.RunOptions, cmdArray []string) {
 	_ = cgroupManager.Set(res)
 	_ = cgroupManager.Apply(parent.Process.Pid, res)
 
-	_, err := container.RecordContainerInfo(parent.Process.Pid, cmdArray, opts.Name, containerID, opts.Volume)
+	_, err := container.RecordContainerInfo(parent.Process.Pid, cmdArray, opts.Name, containerID, opts.Volume, imageName)
 	if err != nil {
 		log.Errorw(err, "Error to record container info")
 		return
@@ -95,7 +95,7 @@ func run(opts *options.RunOptions, cmdArray []string) {
 	utils.WritePipeCommand(cmdArray, writePipe)
 	if opts.TTY {
 		_ = parent.Wait()
-		rootfs.DeleteWorkSpace(opts)
+		rootfs.DeleteWorkSpace(opts, imageName)
 		container.DeleteContainerInfo(containerID)
 	}
 }

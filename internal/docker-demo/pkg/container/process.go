@@ -16,7 +16,7 @@ import (
 )
 
 // NewParentProcess 构建 command 用于启动第一个新的进程
-func NewParentProcess(containerID string, opts *options.RunOptions, command string) (*exec.Cmd, *os.File) {
+func NewParentProcess(containerID string, opts *options.RunOptions, command, imageName string) (*exec.Cmd, *os.File) {
 	readPipe, writePipe, err := os.Pipe()
 	if err != nil {
 		log.Errorw(err, "Error to create pipe")
@@ -44,8 +44,9 @@ func NewParentProcess(containerID string, opts *options.RunOptions, command stri
 		cmd.Stdout = stdLogFile
 	}
 	cmd.ExtraFiles = []*os.File{readPipe}
-	rootfs.NewWorkSpace(opts)
-	cmd.Dir = consts.BUSYBOX_ROOT_MNT
+	cmd.Env = append(os.Environ(), opts.Envs...)
+	rootfs.NewWorkSpace(opts, imageName)
+	cmd.Dir = fmt.Sprintf(consts.LOWER_DIR_TEMP, imageName)
 
 	return cmd, writePipe
 }

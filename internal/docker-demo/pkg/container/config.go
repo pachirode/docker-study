@@ -28,9 +28,10 @@ type Info struct {
 	CreatedTime string `json:"created_time"` // 创建时间
 	Status      string `json:"status"`       // 容器的状态
 	Volume      string `json:"volume"`       // 挂载目录
+	Image       string `json:"image"`        // ImageName
 }
 
-func RecordContainerInfo(containerPID int, commandArray []string, containerName, containerID, volume string) (*Info, error) {
+func RecordContainerInfo(containerPID int, commandArray []string, containerName, containerID, volume, imageName string) (*Info, error) {
 	if containerName == "" {
 		containerName = containerID
 	}
@@ -43,6 +44,7 @@ func RecordContainerInfo(containerPID int, commandArray []string, containerName,
 		CreatedTime: time.Now().Format("2006-01-02 15:04:05"),
 		Status:      RUNNING,
 		Volume:      volume,
+		Image:       imageName,
 	}
 	jsonBytes, err := json.Marshal(containerInfo)
 	if err != nil {

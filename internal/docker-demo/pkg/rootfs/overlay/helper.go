@@ -36,8 +36,8 @@ func GetOverlayFSDirs(lower, upper, worker string) string {
 }
 
 // createLower 根据 containerID, imageName 准备 lower 层目录
-func createLower() {
-	utils.InitBusyboxRoot()
+func createLower(imageName string) {
+	utils.InitImageRoot(imageName)
 }
 
 // createOtherDirs 创建 upper, merged, worker

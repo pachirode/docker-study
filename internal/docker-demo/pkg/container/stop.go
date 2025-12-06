@@ -3,6 +3,7 @@ package container
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/pachirode/docker-demo/pkg/errors"
 	"os"
 	"path"
 	"strconv"
@@ -29,7 +30,7 @@ func StopContainer(containerID string) {
 		log.Errorw(err, "Error to get process by pid", "pid", pid)
 		return
 	}
-	if err = p.Signal(syscall.SIGTERM); err != nil {
+	if err = p.Signal(syscall.SIGTERM); err != nil && !errors.Is(err, os.ErrProcessDone) {
 		log.Errorw(err, "Error to stop container", "id", containerID, "pid", pid)
 		return
 	}

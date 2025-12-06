@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/rootfs"
@@ -26,7 +27,11 @@ func NewCommitCommand() *app.Command {
 
 func commit() app.RunCommandFunc {
 	return func(args []string) error {
-		rootfs.CommitContainer()
+		if len(args) < 1 {
+			return fmt.Errorf("missing container command")
+		}
+
+		rootfs.CommitContainer(args[0])
 		return nil
 	}
 }

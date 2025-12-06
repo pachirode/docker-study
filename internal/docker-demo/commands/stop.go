@@ -31,7 +31,7 @@ func stop() app.RunCommandFunc {
 		if len(args) < 1 {
 			return fmt.Errorf("missing containerID")
 		}
-		container.RemoveContainer(args[0])
+		container.StopContainer(args[0])
 		return nil
 	}
 }

@@ -1,6 +1,7 @@
 package overlay
 
 import (
+	"fmt"
 	"os/exec"
 
 	"github.com/pachirode/pkg/log"
@@ -9,8 +10,8 @@ import (
 	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/utils"
 )
 
-func CommitContainer() {
-	imageTar := GetImage(consts.BUSYBOX)
+func CommitContainer(imageName string) {
+	imageTar := GetImage(imageName)
 	exists, err := utils.PathExists(imageTar)
 	if err != nil {
 		log.Errorw(err, "Error to check image", "imagePath", imageTar)
@@ -23,7 +24,8 @@ func CommitContainer() {
 	}
 
 	log.Infow("Starting commit container", "imagePath", imageTar)
-	if _, err = exec.Command("tar", "-czf", imageTar, "-C", consts.BUSYBOX_ROOT_MNT, ".").CombinedOutput(); err != nil {
-		log.Errorw(err, "Error to tar container", "mnt", consts.BUSYBOX_ROOT_MNT)
+	imageRoot := fmt.Sprintf(consts.LOWER_DIR_TEMP, imageName)
+	if _, err = exec.Command("tar", "-czf", imageTar, "-C", imageRoot, ".").CombinedOutput(); err != nil {
+		log.Errorw(err, "Error to tar container", "mnt", imageRoot)
 	}
 }

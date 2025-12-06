@@ -19,15 +19,22 @@ var (
 	supportOverlay bool
 )
 
-func InitBusyboxRoot() {
+func InitImageRoot(imageName string) {
 	pivotOnce.Do(func() {
-		if ok, _ := PathExists("/var/lib/docker-demo/overlay2/busybox/lower"); !ok {
-			MkdirAll("/var/lib/docker-demo/overlay2/busybox/lower", consts.PERM_0777)
-			runCommand("docker", "run", "-d", "--name", "my_busybox", "busybox", "top", "-b")
+		imageRoot := fmt.Sprintf(consts.LOWER_DIR_TEMP, imageName)
+		if ok, _ := PathExists(imageRoot); !ok {
+			MkdirAll(imageRoot, consts.PERM_0777)
+			runCommand("docker", "run", "-d", "--name", "my_busybox", imageName, "top", "-b")
 
-			runCommand("docker", "export", "-o", "busybox.tar", "my_busybox")
+			runCommand("docker", "export", "-o", "image.tar", "my_busybox")
 
-			runCommand("tar", "-xvf", "busybox.tar", "-C", "/var/lib/docker-demo/overlay2/busybox/lower")
+			runCommand("docker", "stop", "my_busybox")
+
+			runCommand("docker", "rm", "my_busybox")
+
+			runCommand("tar", "-xvf", "image.tar", "-C", imageRoot)
+
+			os.Remove("image.tar")
 		}
 	})
 }

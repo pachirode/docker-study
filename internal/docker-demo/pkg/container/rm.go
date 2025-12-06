@@ -25,5 +25,5 @@ func RemoveContainer(containerID string) {
 	utils.RemoveDirs([]string{dirDir})
 	opts := options.RunOptions{}
 	opts.Volume = containerInfo.Volume
-	rootfs.DeleteWorkSpace(&opts)
+	rootfs.DeleteWorkSpace(&opts, containerInfo.Image)
 }

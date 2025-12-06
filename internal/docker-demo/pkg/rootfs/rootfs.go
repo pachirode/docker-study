@@ -6,20 +6,20 @@ import (
 	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/utils"
 )
 
-func NewWorkSpace(opts *options.RunOptions) {
+func NewWorkSpace(opts *options.RunOptions, imageName string) {
 	if utils.SupportOverlay() {
-		overlay.NewWorkSpace(opts)
+		overlay.NewWorkSpace(opts, imageName)
 	}
 }
 
-func DeleteWorkSpace(opts *options.RunOptions) {
+func DeleteWorkSpace(opts *options.RunOptions, imageName string) {
 	if utils.SupportOverlay() {
-		overlay.DeleteWorkSpace(opts)
+		overlay.DeleteWorkSpace(opts, imageName)
 	}
 }
 
-func CommitContainer() {
+func CommitContainer(imageName string) {
 	if utils.SupportOverlay() {
-		overlay.CommitContainer()
+		overlay.CommitContainer(imageName)
 	}
 }
