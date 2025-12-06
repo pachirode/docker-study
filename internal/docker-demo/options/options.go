@@ -22,6 +22,12 @@ type RunOptions struct {
 	Log      *log.Options `json:"log" mapstructure:"log"`
 }
 
+type NetworkOptions struct {
+	Driver string       `json:"driver" mapstructure:"driver"`
+	Subnet string       `json:"subnet" mapstructure:"subnet"`
+	Log    *log.Options `json:"log" mapstructure:"log"`
+}
+
 func NewRunOptions() *RunOptions {
 	opts := RunOptions{
 		TTY:      false,
@@ -38,6 +44,14 @@ func NewRunOptions() *RunOptions {
 	}
 
 	return &opts
+}
+
+func NewNetworkOptions() *NetworkOptions {
+	return &NetworkOptions{
+		Driver: "",
+		Subnet: "",
+		Log:    log.NewOptions(),
+	}
 }
 
 func (opts *RunOptions) Flags() (nfs flags.NamedFlagSets) {
@@ -61,7 +75,23 @@ func (opts *RunOptions) Flags() (nfs flags.NamedFlagSets) {
 	return nfs
 }
 
+func (opts *NetworkOptions) Flags() (nfs flags.NamedFlagSets) {
+	opts.Log.AddFlags(nfs.GetFlagSet("logs"))
+
+	fs := nfs.GetFlagSet("network")
+	fs.StringVar(&opts.Driver, "driver", "", "network driver")
+	fs.StringVar(&opts.Subnet, "subnet", "", "network driver")
+
+	return nfs
+}
+
 func (opts RunOptions) String() string {
+	data, _ := json.Marshal(opts)
+
+	return string(data)
+}
+
+func (opts NetworkOptions) String() string {
 	data, _ := json.Marshal(opts)
 
 	return string(data)

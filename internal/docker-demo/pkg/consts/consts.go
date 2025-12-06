@@ -48,3 +48,10 @@ const (
 	ENV_EXEC_PID = "docker-demo-pid"
 	ENV_EXEC_CMD = "docker-demo-cmd"
 )
+
+// Network
+const (
+	NETWORK_ROOT                  = "/var/lib/docker-demo/network/"
+	NETWORK_IPAM                  = NETWORK_ROOT + "ipam/"
+	NETWORK_DEFAULT_IPAM_ALLOCTOR = NETWORK_IPAM + "subnet.json"
+)
