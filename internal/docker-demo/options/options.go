@@ -18,7 +18,7 @@ type RunOptions struct {
 	Name     string       `json:"name" mapstructure:"name"`
 	Envs     []string     `json:"environment" mapstructure:"environment"`
 	Net      string       `json:"net" mapstructure:"net"`
-	Port     string       `json:"port" mapstructure:"port"`
+	Port     []string     `json:"port" mapstructure:"port"`
 	Log      *log.Options `json:"log" mapstructure:"log"`
 }
 
@@ -39,7 +39,7 @@ func NewRunOptions() *RunOptions {
 		Name:     "",
 		Envs:     []string{},
 		Net:      "",
-		Port:     "",
+		Port:     []string{},
 		Log:      log.NewOptions(),
 	}
 
@@ -65,7 +65,7 @@ func (opts *RunOptions) Flags() (nfs flags.NamedFlagSets) {
 	fs.StringVarP(&opts.Name, "name", "n", "", "-n test-container")
 	fs.StringSliceVarP(&opts.Envs, "envs", "e", []string{}, "-e env=test")
 	fs.StringVar(&opts.Net, "net", "", "--net testbr")
-	fs.StringVarP(&opts.Port, "port", "p", "", "-p 8080:80")
+	fs.StringSliceVarP(&opts.Port, "port", "p", []string{}, "-p 8080:80")
 
 	fsLimit := nfs.GetFlagSet("limit")
 	fsLimit.StringVarP(&opts.MEM, "mem", "m", "", "-m 100m")

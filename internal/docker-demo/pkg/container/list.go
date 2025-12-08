@@ -7,6 +7,7 @@ import (
 
 	"github.com/pachirode/pkg/log"
 
+	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/config"
 	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/consts"
 )
 
@@ -16,7 +17,7 @@ func ListContainers() {
 		log.Errorw(err, "Error to list files", "path", consts.INFO_LOCATION)
 		return
 	}
-	containers := make([]*Info, 0)
+	containers := make([]*config.Info, 0)
 	for _, file := range files {
 		if file.IsDir() {
 			tmpContainer, err := getContainerInfo(file.Name())

@@ -25,6 +25,7 @@ func NewApp(basename string) *app.App {
 	application.AddCommand(commands.NewExecCommand())
 	application.AddCommand(commands.NewStopCommand())
 	application.AddCommand(commands.NewRmCommand())
+	application.AddCommand(commands.NewNetWorkCommand())
 	application.BuildCommand()
 
 	return application

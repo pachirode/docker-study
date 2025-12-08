@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/config"
 	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/consts"
 	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/utils"
 	"github.com/pachirode/docker-demo/pkg/errors"
@@ -20,23 +21,12 @@ const (
 	EXIT    = "exited"
 )
 
-type Info struct {
-	Pid         string `json:"pid"`          // 容器的init进程在宿主机上的 PID
-	Id          string `json:"id"`           // 容器Id
-	Name        string `json:"name"`         // 容器名
-	Command     string `json:"command"`      // 容器内init运行命令
-	CreatedTime string `json:"created_time"` // 创建时间
-	Status      string `json:"status"`       // 容器的状态
-	Volume      string `json:"volume"`       // 挂载目录
-	Image       string `json:"image"`        // ImageName
-}
-
-func RecordContainerInfo(containerPID int, commandArray []string, containerName, containerID, volume, imageName string) (*Info, error) {
+func RecordContainerInfo(containerPID int, commandArray []string, containerName, containerID, volume, imageName, networkName, ip string, portMapping []string) (*config.Info, error) {
 	if containerName == "" {
 		containerName = containerID
 	}
 	command := strings.Join(commandArray, " ")
-	containerInfo := &Info{
+	containerInfo := &config.Info{
 		Pid:         strconv.Itoa(containerPID),
 		Id:          containerID,
 		Name:        containerName,
@@ -45,6 +35,9 @@ func RecordContainerInfo(containerPID int, commandArray []string, containerName,
 		Status:      RUNNING,
 		Volume:      volume,
 		Image:       imageName,
+		NetworkName: networkName,
+		PortMapping: portMapping,
+		IP:          ip,
 	}
 	jsonBytes, err := json.Marshal(containerInfo)
 	if err != nil {

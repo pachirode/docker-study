@@ -7,6 +7,7 @@ import (
 
 	"github.com/pachirode/docker-demo/internal/docker-demo/options"
 	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/consts"
+	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/network"
 	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/rootfs"
 	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/utils"
 )
@@ -26,4 +27,10 @@ func RemoveContainer(containerID string) {
 	opts := options.RunOptions{}
 	opts.Volume = containerInfo.Volume
 	rootfs.DeleteWorkSpace(&opts, containerInfo.Image)
+	if containerInfo.NetworkName != "" {
+		if err = network.Disconnect(containerInfo.NetworkName, containerInfo); err != nil {
+			log.Errorw(err, "Error to disconnect container network")
+			return
+		}
+	}
 }

@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"strconv"
 	"sync"
 
 	"github.com/pachirode/pkg/log"
@@ -9,7 +10,9 @@ import (
 	"github.com/pachirode/docker-demo/internal/docker-demo/options"
 	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/cgroups"
 	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/cgroups/resource"
+	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/config"
 	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/container"
+	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/network"
 	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/rootfs"
 	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/utils"
 	"github.com/pachirode/docker-demo/pkg/app"
@@ -86,7 +89,24 @@ func run(opts *options.RunOptions, cmdArray []string, imageName string) {
 	_ = cgroupManager.Set(res)
 	_ = cgroupManager.Apply(parent.Process.Pid, res)
 
-	_, err := container.RecordContainerInfo(parent.Process.Pid, cmdArray, opts.Name, containerID, opts.Volume, imageName)
+	var containerIP string
+	if opts.Net != "" {
+		containerInfo := &config.Info{
+			Id:          containerID,
+			Pid:         strconv.Itoa(parent.Process.Pid),
+			Name:        imageName,
+			PortMapping: opts.Port,
+		}
+
+		ip, err := network.Connect(opts.Net, containerInfo)
+		if err != nil {
+			log.Errorw(err, "Error to connect network", "net", opts.Net)
+			return
+		}
+		containerIP = ip.String()
+	}
+
+	_, err := container.RecordContainerInfo(parent.Process.Pid, cmdArray, opts.Name, containerID, opts.Volume, imageName, opts.Net, containerIP, opts.Port)
 	if err != nil {
 		log.Errorw(err, "Error to record container info")
 		return

@@ -12,6 +12,7 @@ import (
 
 	"github.com/pachirode/pkg/log"
 
+	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/config"
 	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/consts"
 	"github.com/pachirode/docker-demo/pkg/errors"
 )
@@ -98,7 +99,7 @@ func pivotRoot(root string) error {
 	return os.Remove(pivotDir)
 }
 
-func getContainerInfo(containerID string) (*Info, error) {
+func getContainerInfo(containerID string) (*config.Info, error) {
 	configDir := fmt.Sprintf(consts.INFO_LOCATION_TEMP, containerID)
 	configFile := path.Join(configDir, consts.CONFIG_JSON)
 	content, err := os.ReadFile(configFile)
@@ -106,7 +107,7 @@ func getContainerInfo(containerID string) (*Info, error) {
 		log.Errorw(err, "Error to read config file", "path", configFile)
 		return nil, err
 	}
-	info := new(Info)
+	info := new(config.Info)
 	if err = json.Unmarshal(content, info); err != nil {
 		log.Errorw(err, "Error to unmarshal config file", "content", content)
 		return nil, err
