@@ -21,7 +21,7 @@ var (
 
 func InitImageRoot(imageName string) {
 	pivotOnce.Do(func() {
-		imageRoot := fmt.Sprintf(consts.LOWER_DIR_TEMP, imageName)
+		imageRoot := fmt.Sprintf(consts.LOWER_DIR_TEMP, strings.Replace(imageName, ":", "_", -1))
 		if ok, _ := PathExists(imageRoot); !ok {
 			MkdirAll(imageRoot, consts.PERM_0777)
 			runCommand("docker", "run", "-d", "--name", "my_busybox", imageName, "top", "-b")

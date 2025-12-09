@@ -16,10 +16,12 @@ import (
 type BridgeNetworkDriver struct {
 }
 
+// Name 返回网络驱动名
 func (bn *BridgeNetworkDriver) Name() string {
 	return "bridge"
 }
 
+// Create 创建网络
 func (bn *BridgeNetworkDriver) Create(subnet, name string) (*Network, error) {
 	ip, ipRange, _ := net.ParseCIDR(subnet)
 	ipRange.IP = ip
@@ -35,12 +37,15 @@ func (bn *BridgeNetworkDriver) Create(subnet, name string) (*Network, error) {
 	return n, err
 }
 
+// Delete 删除网络
 func (bn *BridgeNetworkDriver) Delete(network *Network) error {
+	// 清除路由规则
 	err := deleteIpRoute(network.Name, network.IpRange.String())
 	if err != nil {
 		return errors.WithMessage(err, "Error to del network route")
 	}
 
+	// 清除 iptables 规则
 	err = setupIPTables(network.Name, network.IpRange, true)
 	if err != nil {
 		return errors.WithMessage(err, "Error to delete iptables rule")
@@ -48,10 +53,10 @@ func (bn *BridgeNetworkDriver) Delete(network *Network) error {
 
 	err = bn.deleteBridge(network)
 	if err != nil {
-		return err
+		return errors.WithMessage(err, "Error to delete bridge")
 	}
 
-	return err
+	return nil
 }
 
 // Connect 将指定的 Endpoint 连接到指定的网络
@@ -74,6 +79,7 @@ func (bn *BridgeNetworkDriver) Connect(networkName string, endpoint *Endpoint) e
 		PeerName:  "cfi-" + endpoint.ID[:5],
 	}
 
+	// 创建 Veth 接口，因为指定 MasterIndex 使用已经将其挂载到网桥上
 	if err = netlink.LinkAdd(&endpoint.Device); err != nil {
 		return errors.WithMessage(err, "Error to add endpoint device")
 	}
@@ -143,6 +149,7 @@ func (bn *BridgeNetworkDriver) initBridge(n *Network) error {
 	return nil
 }
 
+// deleteBridge 删除虚拟网桥设备
 func (bn *BridgeNetworkDriver) deleteBridge(n *Network) error {
 	bridgeName := n.Name
 
@@ -152,7 +159,7 @@ func (bn *BridgeNetworkDriver) deleteBridge(n *Network) error {
 	}
 
 	if err = netlink.LinkDel(la); err != nil {
-		return fmt.Errorf("Error to remove bridge interface")
+		return errors.WithMessage(err, "Error to remove bridge interface")
 	}
 
 	return nil

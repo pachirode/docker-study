@@ -100,17 +100,17 @@ func loadNetwork() (map[string]*Network, error) {
 		}
 
 		_, netName := path.Split(netPath)
-		net := &Network{
+		network := &Network{
 			Name: netName,
 		}
 
-		if err = net.load(netPath); err != nil {
+		if err = network.load(netPath); err != nil {
 			log.Errorw(err, "Error to load net", "path", netPath)
 			return err
 		}
 
-		if net.IpRange != nil {
-			networks[netName] = net
+		if network.IpRange != nil {
+			networks[netName] = network
 		}
 		return nil
 	})
@@ -119,11 +119,9 @@ func loadNetwork() (map[string]*Network, error) {
 }
 
 func CreateNetwork(opts *options.NetworkOptions, name string) error {
-	log.Infow("Starting create network", "subnet", opts.Subnet, "driver", opts.Driver)
 	_, cidr, _ := net.ParseCIDR(opts.Subnet)
 	ip, err := ipAllocator.Allocate(cidr)
 	if err != nil {
-		log.Errorw(err, "Error to allocate ip")
 		return err
 	}
 	cidr.IP = ip
@@ -253,7 +251,7 @@ func enterContainerNetNS(enLink *netlink.Link, info *config.Info) func() {
 	}
 
 	// 获取当前网络命名空间
-	orgins, err := netns.Get()
+	origns, err := netns.Get()
 	if err != nil {
 		log.Errorw(err, "Error to get current net namespace")
 	}
@@ -265,8 +263,10 @@ func enterContainerNetNS(enLink *netlink.Link, info *config.Info) func() {
 
 	// 恢复到原始的网络命名空间
 	return func() {
-		netns.Set(orgins)
-		orgins.Close()
+		// 恢复到上面获取到的之前的 Net Namespace
+		netns.Set(origns)
+		origns.Close()
+		// 取消对当附程序的线程锁定
 		runtime.UnlockOSThread()
 		f.Close()
 	}
@@ -280,7 +280,7 @@ func configEndpointIpAndRoute(ep *Endpoint, info *config.Info) error {
 		return errors.WithMessage(err, "Error to found veth")
 	}
 
-	defer enterContainerNetNS(&peerLink, info)
+	defer enterContainerNetNS(&peerLink, info)()
 
 	interIP := *ep.Network.IpRange
 	interIP.IP = ep.IPAddress
@@ -303,13 +303,13 @@ func configEndpointIpAndRoute(ep *Endpoint, info *config.Info) error {
 	// 构建要添加的路由数据，包括网络设备、网关IP及目的网段
 	// 相当于route add -net 0.0.0.0/0 gw (Bridge网桥地址) dev （容器内的Veth端点设备)
 
-	defalutRoute := &netlink.Route{
+	defaultRoute := &netlink.Route{
 		LinkIndex: peerLink.Attrs().Index,
 		Gw:        ep.Network.IpRange.IP,
 		Dst:       cidr,
 	}
 
-	if err = netlink.RouteAdd(defalutRoute); err != nil {
+	if err = netlink.RouteAdd(defaultRoute); err != nil {
 		return errors.WithMessage(err, "Error to route add veth")
 	}
 

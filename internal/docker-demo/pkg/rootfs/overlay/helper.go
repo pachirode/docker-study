@@ -13,23 +13,27 @@ import (
 	"github.com/pachirode/docker-demo/internal/docker-demo/pkg/utils"
 )
 
-func GetRoot(containerID string) string { return consts.ROOT_PATH + containerID }
+func GetRoot(containerID string) string {
+	return consts.ROOT_PATH + strings.Replace(containerID, ":", "_", -1)
+}
 
 func GetImage(imageName string) string { return fmt.Sprintf("%s%s.tar", consts.IMAGE_PATH, imageName) }
 
 func GetLower(containerID string) string {
-	return fmt.Sprintf(consts.LOWER_DIR_TEMP, containerID)
+	return fmt.Sprintf(consts.LOWER_DIR_TEMP, strings.Replace(containerID, ":", "_", -1))
 }
 
 func GetUpper(containerID string) string {
-	return fmt.Sprintf(consts.UPPER_DIR_TEMP, containerID)
+	return fmt.Sprintf(consts.UPPER_DIR_TEMP, strings.Replace(containerID, ":", "_", -1))
 }
 
 func GetWorker(containerID string) string {
-	return fmt.Sprintf(consts.WORK_DIR_TEMP, containerID)
+	return fmt.Sprintf(consts.WORK_DIR_TEMP, strings.Replace(containerID, ":", "_", -1))
 }
 
-func GetMerged(containerID string) string { return fmt.Sprintf(consts.MERGED_DIR_TEMP, containerID) }
+func GetMerged(containerID string) string {
+	return fmt.Sprintf(consts.MERGED_DIR_TEMP, strings.Replace(containerID, ":", "_", -1))
+}
 
 func GetOverlayFSDirs(lower, upper, worker string) string {
 	return fmt.Sprintf(consts.OVERLAY_PARAMETER_TEMP, lower, upper, worker)
